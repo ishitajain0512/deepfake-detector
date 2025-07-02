@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Deepfake Video Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+            rgba(33, 147, 176, 0.6),
+            rgba(109, 213, 237, 0.6)
+          ),
+          url("https://s24806.pcdn.co/wp-content/uploads/2024/07/TrendMicro-Deepfake-videostill2-970-copy.jpg");
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 50px 40px;
+        width: 90%;
+        max-width: 550px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+      }
+
+      input[type="file"] {
+        padding: 14px;
+        width: 100%;
+        border: 2px dashed #bbb;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="file"]:hover {
+        border-color: #2193b0;
+      }
+
+      input[type="submit"] {
+        padding: 14px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      input[type="submit"]:hover {
+        background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        transform: scale(1.03);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .result {
+        margin-top: 30px;
+        padding: 18px 20px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 12px;
+        animation: fadeIn 0.6s ease-in-out;
+      }
+
+      .real {
+        background-color: #e6f4ea;
+        color: #2e7d32;
+        border: 2px solid #a5d6a7;
+      }
+
+      .fake {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 2px solid #ef9a9a;
+      }
+
+      footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #999;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .loading {
+        margin-top: 20px;
+        font-size: 1rem;
+        color: #555;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.4;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Deepfake Video Analyzer</h1>
+      <p class="subtitle">
+        Upload a video and let our AI tell you if it’s <strong>REAL</strong> or
+        <strong>FAKE</strong>.
+      </p>
+
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required />
+        <br />
+        <p id="lastUploaded" style="font-size: 0.9rem; color: #555"></p>
+        <input type="submit" value="Analyze Now" />
+      </form>
+
+      <div id="loader" class="loading" style="display: none">
+        Analyzing video, please wait...
+      </div>
+      <div id="resultBox" class="result" style="display: none"></div>
+
+      {% if prediction %}
+      <div
+        class="result {% if 'REAL' in prediction %}real{% else %}fake{% endif %}"
+      >
+        {{ prediction }}
+      </div>
+      {% endif %}
+
+      <footer>© 2025 Your Digital Shield Against Deepfakes</footer>
+    </div>
+    <script>
+  const form = document.getElementById("uploadForm");
+  const loader = document.getElementById("loader");
+  const resultBox = document.getElementById("resultBox");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault(); // prevent page reload
+    const formData = new FormData(form);
+    
+    // Show loader
+    loader.style.display = "block";
+    resultBox.style.display = "none";
+
+    const response = await fetch("/predict", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    loader.style.display = "none";
+
+    if (data.error) {
+      resultBox.textContent = data.error;
+      resultBox.className = "result";
+    } else {
+      resultBox.textContent = data.prediction;
+      resultBox.className = "result " + (data.prediction.includes("REAL") ? "real" : "fake");
+    }
+
+    resultBox.style.display = "block";
+  });
+</script>
+
+  </body>
+</html>
