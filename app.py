@@ -82,7 +82,6 @@ def home():
 
 # Endpoint to predict if the video is deepfake or not
 @app.route('/predict', methods=['POST'])
-@app.route('/predict', methods=['POST'])
 def predict():
     if 'video' not in request.files:
         return jsonify({'error': 'No video file provided'})
