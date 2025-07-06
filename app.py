@@ -98,7 +98,7 @@ def predict():
     frames = load_video(video_path)
     frame_features, frame_mask = prepare_single_video(frames)
     prediction = model.predict([frame_features, frame_mask])[0]
-    result = 'FAKE' if prediction >= 0.51 else 'REAL'
+    result = 'FAKE' if prediction >= 0.6 else 'REAL'
     confidence = float(prediction)
     os.remove(video_path)
 

@@ -9,5 +9,10 @@ uploads/
 .ipynb_checkpoints/
 
 # Ignore temporary files
-*.pyc
+venv/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
