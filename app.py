@@ -7,6 +7,10 @@ import os
 
 app = Flask(__name__)
 
+if not os.path.exists('uploads'):
+    os.makedirs('uploads')
+
+
 # Load the pre-trained model
 model = tf.keras.models.load_model('./model/deepfake_video_model.h5')
 
@@ -117,6 +121,4 @@ def crop_center_square(frame):
 
 # Create the uploads folder if it doesn’t exist and run the app
 if __name__ == '__main__':
-    if not os.path.exists('uploads'):
-        os.makedirs('uploads')
     app.run(debug=True)
